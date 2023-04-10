@@ -10,8 +10,10 @@ import (
 
 type Session interface {
 	Main() error
+	User() *user.User
 	Results() string
-	ValidRequest(r *map[string]string)
+	Headers() *map[string]string
+	ValidRequest(r string) error
 }
 
 func WebPage(wp string, usr *user.User) (Session, error) {

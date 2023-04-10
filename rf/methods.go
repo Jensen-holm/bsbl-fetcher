@@ -8,7 +8,7 @@ import (
 const BASEURL string = "https://baseball-reference.com"
 
 func (rf *Reference) Main() error {
-	err := ValidRequest(rf.Request())
+	err := rf.ValidRequest(rf.Request())
 	if err != nil {
 		return err
 	}
@@ -25,6 +25,6 @@ func (rf *Reference) Main() error {
 	return nil
 }
 
-func ValidRequest(r string) error {
+func (rf *Reference) ValidRequest(r string) error {
 	return nil
 }

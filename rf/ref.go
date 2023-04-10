@@ -35,8 +35,3 @@ func (rf *Reference) Request() string {
 func (rf *Reference) User() *user.User {
 	return rf.user
 }
-
-func (rf *Reference) ValidRequest(request *map[string]string) {
-	//TODO implement me
-	panic("implement me")
-}
