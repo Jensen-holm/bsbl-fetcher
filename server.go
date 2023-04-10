@@ -1,23 +1,26 @@
 package main
 
 import (
-	"fmt"
+	"github.com/Jensen-holm/bsbl-api/crawl"
 	"github.com/gofiber/fiber/v2"
+	"net/http"
 )
 
 func main() {
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	// baseball reference
+	app.Get("/rf", func(c *fiber.Ctx) error {
+		h := make(map[string]string)
+		c.Request().Header.VisitAll(func(key, value []byte) {
+			h[string(key)] = string(value)
+		})
 
-		h := c.Request().Header.String()
-		fmt.Println(h)
-
-		//r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
-		//if err != nil {
-		//	panic(err)
-		//}
-		return c.JSON(h)
+		r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
+		if err != nil {
+			panic(err)
+		}
+		return c.JSON(r)
 	})
 
 	app.Listen(":3000")
