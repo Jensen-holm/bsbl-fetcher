@@ -7,8 +7,8 @@ import (
 type Reference struct {
 	user    *user.User
 	headers *map[string]string
+	results map[any]any
 	request string
-	results string
 }
 
 func NewRef(usr *user.User) *Reference {
@@ -20,7 +20,7 @@ func NewRef(usr *user.User) *Reference {
 	}
 }
 
-func (rf *Reference) Results() string {
+func (rf *Reference) Results() map[any]any {
 	return rf.results
 }
 
@@ -36,6 +36,6 @@ func (rf *Reference) User() *user.User {
 	return rf.user
 }
 
-func (rf *Reference) SetResults(r string) {
+func (rf *Reference) SetResults(r map[any]any) {
 	rf.results = r
 }

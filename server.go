@@ -4,6 +4,7 @@ import (
 	"github.com/Jensen-holm/bsbl-api/crawl"
 	"github.com/Jensen-holm/bsbl-api/session"
 	"github.com/Jensen-holm/bsbl-api/user"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"log"
@@ -13,6 +14,9 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
+
+		st := time.Now()
+
 		h := crawl.GetHeaders(c)
 		usr := user.NewUser(h)
 
@@ -32,7 +36,11 @@ func main() {
 			)
 		}
 
-		return c.JSON(bsbl.Results())
+		et := float64(time.Since(st))
+
+		result := session.NewResult(et, bsbl.Results())
+
+		return c.JSON(result.Unpack())
 	})
 
 	err := app.Listen(":3000")

@@ -11,8 +11,8 @@ import (
 type Session interface {
 	Main() error
 	User() *user.User
-	Results() string
 	Request() string
+	Results() map[any]any
 	Headers() *map[string]string
 	ValidRequest(r string) error
 }

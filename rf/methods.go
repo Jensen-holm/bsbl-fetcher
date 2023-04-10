@@ -13,7 +13,7 @@ func (rf *Reference) Main() error {
 		return err
 	}
 
-	r, err := scrape.SendGet(
+	_, err = scrape.SendGet(
 		BASEURL,
 		rf.Headers(),
 		&http.Client{},
@@ -22,7 +22,8 @@ func (rf *Reference) Main() error {
 		return err
 	}
 
-	rf.SetResults(r.Text())
+	// we need to put our data into a map[any]any somehow
+	// and return it at the bottom of this function
 	return nil
 }
 
