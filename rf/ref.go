@@ -35,3 +35,7 @@ func (rf *Reference) Request() string {
 func (rf *Reference) User() *user.User {
 	return rf.user
 }
+
+func (rf *Reference) SetResults(r string) {
+	rf.results = r
+}

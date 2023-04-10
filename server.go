@@ -1,6 +1,7 @@
 package main
 
 import (
+	scrape "github.com/Jensen-holm/bsbl-api/crawl"
 	"github.com/Jensen-holm/bsbl-api/session"
 	"github.com/Jensen-holm/bsbl-api/user"
 
@@ -11,11 +12,11 @@ import (
 func main() {
 	app := fiber.New()
 
-	// baseball reference
 	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
-		h := getHeaders(c)
+		h := scrape.GetHeaders(c)
 		usr := user.NewUser(h)
-		bsbl, err := session.WebPage(h["web-page"], usr)
+
+		bsbl, err := session.WebPage(h["Web-Page"], usr)
 		if err != nil {
 			return fiber.NewError(
 				fiber.StatusBadRequest,
@@ -38,12 +39,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("error listening to server: %v", err)
 	}
-}
-
-func getHeaders(c *fiber.Ctx) map[string]string {
-	h := make(map[string]string)
-	c.Request().Header.VisitAll(func(key, value []byte) {
-		h[string(key)] = string(value)
-	})
-	return h
 }

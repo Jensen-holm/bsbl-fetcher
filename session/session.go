@@ -12,13 +12,16 @@ type Session interface {
 	Main() error
 	User() *user.User
 	Results() string
+	Request() string
 	Headers() *map[string]string
 	ValidRequest(r string) error
 }
 
 func WebPage(wp string, usr *user.User) (Session, error) {
 	var PageMap = map[string]Session{
-		"Baseball-Reference": rf.NewRef(usr),
+		"baseball-reference": rf.NewRef(usr),
+		"fangraphs":          rf.NewRef(usr),
+		"retro-sheet":        rf.NewRef(usr),
 	}
 
 	if s, isIn := PageMap[wp]; isIn {
@@ -27,6 +30,6 @@ func WebPage(wp string, usr *user.User) (Session, error) {
 
 	return nil, fiber.NewError(
 		fiber.StatusBadRequest,
-		fmt.Sprintf("Invalid Source \"%s\"", wp),
+		fmt.Sprintf("invalid Source \"%s\"", wp),
 	)
 }
