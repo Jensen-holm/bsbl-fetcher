@@ -49,7 +49,6 @@ func addHeaders(headers map[string]string, req *http.Request) {
 
 func GetHeaders(c *fiber.Ctx) map[string]string {
 	h := make(map[string]string)
-
 	c.Request().Header.VisitAll(func(key, value []byte) {
 		h[string(key)] = string(value)
 	})
