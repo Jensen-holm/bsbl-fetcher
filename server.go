@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Jensen-holm/bsbl-api/rf"
+	"github.com/Jensen-holm/bsbl-api/session"
 	"github.com/Jensen-holm/bsbl-api/user"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,9 +15,7 @@ func main() {
 	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
 		h := getHeaders(c)
 		usr := user.NewUser(h)
-		bbref := rf.NewRef(usr)
-
-		err := bbref.Main()
+		bsbl, err := session.WebPage(h["web-page"], usr)
 		if err != nil {
 			return fiber.NewError(
 				fiber.StatusBadRequest,
@@ -25,7 +23,15 @@ func main() {
 			)
 		}
 
-		return c.JSON(bbref.Results)
+		err = bsbl.Main()
+		if err != nil {
+			return fiber.NewError(
+				fiber.StatusBadRequest,
+				err.Error(),
+			)
+		}
+
+		return c.JSON(bsbl.Results())
 	})
 
 	err := app.Listen(":3000")

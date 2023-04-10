@@ -1,4 +1,4 @@
-package session
+package scrape
 
 import (
 	"io/ioutil"
@@ -7,7 +7,7 @@ import (
 
 func SendGet(
 	url string,
-	headers map[string]string,
+	headers *map[string]string,
 	client *http.Client,
 ) ([]byte, error) {
 
@@ -16,7 +16,7 @@ func SendGet(
 		return nil, err
 	}
 
-	addHeaders(headers, req)
+	addHeaders(*headers, req)
 	body, err := readBody(client, req)
 	if err != nil {
 		return nil, err

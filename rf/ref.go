@@ -1,19 +1,42 @@
 package rf
 
-import "github.com/Jensen-holm/bsbl-api/user"
+import (
+	"github.com/Jensen-holm/bsbl-api/user"
+)
 
 type Reference struct {
-	User    *user.User
-	Request string
-	Headers *map[string]string
-	Results string
+	user    *user.User
+	headers *map[string]string
+	request string
+	results string
 }
 
 func NewRef(usr *user.User) *Reference {
 	r := usr.Headers["request"]
 	return &Reference{
-		Headers: &usr.Headers,
-		User:    usr,
-		Request: r,
+		headers: &usr.Headers,
+		user:    usr,
+		request: r,
 	}
+}
+
+func (rf *Reference) Results() string {
+	return rf.results
+}
+
+func (rf *Reference) Headers() *map[string]string {
+	return rf.headers
+}
+
+func (rf *Reference) Request() string {
+	return rf.request
+}
+
+func (rf *Reference) User() *user.User {
+	return rf.user
+}
+
+func (rf *Reference) ValidRequest(request *map[string]string) {
+	//TODO implement me
+	panic("implement me")
 }

@@ -1,11 +1,30 @@
 package session
 
 import (
-	"net/http"
+	"fmt"
+	"github.com/Jensen-holm/bsbl-api/rf"
+	"github.com/Jensen-holm/bsbl-api/user"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type Session interface {
-	SendGet(url string, h map[string]string, client *http.Client)
-	ValidRequest(request *map[string]string)
-	Main() interface{}
+	Main() error
+	Results() string
+	ValidRequest(r *map[string]string)
+}
+
+func WebPage(wp string, usr *user.User) (Session, error) {
+	var PageMap = map[string]Session{
+		"Baseball-Reference": rf.NewRef(usr),
+	}
+
+	if s, isIn := PageMap[wp]; isIn {
+		return s, nil
+	}
+
+	return nil, fiber.NewError(
+		fiber.StatusBadRequest,
+		fmt.Sprintf("Invalid Source \"%s\"", wp),
+	)
 }
