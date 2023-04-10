@@ -13,7 +13,7 @@ func (rf *Reference) Main() error {
 		return err
 	}
 
-	_, err = scrape.SendGet(
+	r, err := scrape.SendGet(
 		BASEURL,
 		rf.Headers(),
 		&http.Client{},
@@ -22,6 +22,7 @@ func (rf *Reference) Main() error {
 		return err
 	}
 
+	rf.SetResults(r.Text())
 	return nil
 }
 

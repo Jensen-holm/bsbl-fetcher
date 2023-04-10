@@ -20,8 +20,6 @@ type Session interface {
 func WebPage(wp string, usr *user.User) (Session, error) {
 	var PageMap = map[string]Session{
 		"baseball-reference": rf.NewRef(usr),
-		"fangraphs":          rf.NewRef(usr),
-		"retro-sheet":        rf.NewRef(usr),
 	}
 
 	if s, isIn := PageMap[wp]; isIn {

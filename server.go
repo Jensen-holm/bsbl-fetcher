@@ -1,7 +1,7 @@
 package main
 
 import (
-	scrape "github.com/Jensen-holm/bsbl-api/crawl"
+	"github.com/Jensen-holm/bsbl-api/crawl"
 	"github.com/Jensen-holm/bsbl-api/session"
 	"github.com/Jensen-holm/bsbl-api/user"
 
@@ -13,7 +13,7 @@ func main() {
 	app := fiber.New()
 
 	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
-		h := scrape.GetHeaders(c)
+		h := crawl.GetHeaders(c)
 		usr := user.NewUser(h)
 
 		bsbl, err := session.WebPage(h["Web-Page"], usr)
