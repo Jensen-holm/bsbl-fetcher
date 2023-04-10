@@ -1,4 +1,4 @@
-package crawl
+package session
 
 import (
 	"io/ioutil"
@@ -17,6 +17,15 @@ func SendGet(
 	}
 
 	addHeaders(headers, req)
+	body, err := readBody(client, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
+func readBody(client *http.Client, req *http.Request) ([]byte, error) {
 	res, err := client.Do(req)
 	if err != nil {
 		return nil, err

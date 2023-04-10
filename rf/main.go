@@ -1,0 +1,4 @@
+package rf
+
+func Main() {
+}

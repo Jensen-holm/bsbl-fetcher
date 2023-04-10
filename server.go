@@ -1,57 +1,36 @@
 package main
 
 import (
-	"github.com/Jensen-holm/bsbl-api/crawl"
+	"github.com/Jensen-holm/bsbl-api/rf"
+	"github.com/Jensen-holm/bsbl-api/user"
+
 	"github.com/gofiber/fiber/v2"
-	"net/http"
+	"log"
 )
 
 func main() {
 	app := fiber.New()
 
 	// baseball reference
-	app.Get("/rf", func(c *fiber.Ctx) error {
+	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
 		h := getHeaders(c)
-		r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
-		if err != nil {
-			panic(err)
-		}
-		return c.JSON(r)
-	})
+		usr := user.NewUser(h)
+		bbref := rf.NewRef(usr)
 
-	// fangraphs
-	app.Get("/fg", func(c *fiber.Ctx) error {
-		h := getHeaders(c)
-		r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
+		err := bbref.Main()
 		if err != nil {
-			panic(err)
+			return fiber.NewError(
+				fiber.StatusBadRequest,
+				err.Error(),
+			)
 		}
-		return c.JSON(r)
-	})
 
-	// retro sheet
-	app.Get("/rs", func(c *fiber.Ctx) error {
-		h := getHeaders(c)
-		r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
-		if err != nil {
-			panic(err)
-		}
-		return c.JSON(r)
-	})
-
-	// baseball savant
-	app.Get("/sv", func(c *fiber.Ctx) error {
-		h := getHeaders(c)
-		r, err := crawl.SendGet("https://baseball-reference.com", h, &http.Client{})
-		if err != nil {
-			panic(err)
-		}
-		return c.JSON(r)
+		return c.JSON(bbref.Results)
 	})
 
 	err := app.Listen(":3000")
 	if err != nil {
-		panic(err)
+		log.Fatalf("error listening to server: %v", err)
 	}
 }
 
