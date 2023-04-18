@@ -54,7 +54,7 @@ func (con *Connection) Find(database, collection string, filter bson.M) ([]byte,
 func (con *Connection) ParseCursor(cur *mongo.Cursor) (bson.M, error) {
 	defer cur.Close(context.Background())
 
-	var data bson.M
+	data := make(bson.M, 0)
 	for cur.Next(context.Background()) {
 		var result bson.M
 		err := cur.Decode(&result)

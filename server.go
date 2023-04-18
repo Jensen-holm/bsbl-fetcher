@@ -10,7 +10,6 @@ import (
 func main() {
 
 	var con = db.Connect()
-
 	app := fiber.New()
 
 	app.Get("/find", func(c *fiber.Ctx) error {
@@ -35,7 +34,7 @@ func main() {
 		return nil
 	})
 
-	if err := app.Listen(":3000"); err != nil {
+	if err := app.Listen(":8080"); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
 
