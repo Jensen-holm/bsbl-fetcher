@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
-	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -14,17 +15,28 @@ func main() {
 
 	uri := os.Getenv("LOCAL_MONGO")
 	opts := options.Client().ApplyURI(uri)
-	_, err := mongo.Connect(context.Background(), opts)
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
 		log.Fatalf("error connecting to mongodb client: %v", err)
 	}
 
-	// listen for requests from the ui
-	app := fiber.New()
+	usrs := client.Database("IOTPB").Collection("users")
+	filter := bson.M{"name": "John Doe"}
+	cursor, err := usrs.Find(context.Background(), filter)
+	if err != nil {
+		log.Fatalf("error finding John Doe in the db: %v", err)
+	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("welcome to the baseball fetcher")
-	})
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var result bson.M
+		err := cursor.Decode(&result)
+		if err != nil {
+			// Handle error
+		}
+		fmt.Println(result)
+	}
 
-	app.Listen(":3000")
+	// api listening for requests from the ui
+
 }
