@@ -1,42 +1,42 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"os"
-
+	"github.com/Jensen-holm/bsbl-fetcher/db"
+	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 )
 
 func main() {
 
-	uri := os.Getenv("LOCAL_MONGO")
-	opts := options.Client().ApplyURI(uri)
-	client, err := mongo.Connect(context.Background(), opts)
-	if err != nil {
-		log.Fatalf("error connecting to mongodb client: %v", err)
-	}
+	var con = db.Connect()
 
-	usrs := client.Database("IOTPB").Collection("users")
-	filter := bson.M{"name": "John Doe"}
-	cursor, err := usrs.Find(context.Background(), filter)
-	if err != nil {
-		log.Fatalf("error finding John Doe in the db: %v", err)
-	}
+	app := fiber.New()
 
-	defer cursor.Close(context.Background())
-	for cursor.Next(context.Background()) {
-		var result bson.M
-		err := cursor.Decode(&result)
+	app.Get("/find", func(c *fiber.Ctx) error {
+		name := c.Query("name")
+		filt := bson.M{"name": name}
+		result, err := con.Find("IOTPB", "users", filt)
 		if err != nil {
-			// Handle error
+			panic(err)
 		}
-		fmt.Println(result)
-	}
 
-	// api listening for requests from the ui
+		c.Set("Content-Type", "application/json")
+		_, err = c.Write(result)
+		if err != nil {
+			return err
+		}
+
+		err = c.SendStatus(fiber.StatusOK)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err := app.Listen(":3000"); err != nil {
+		log.Fatalf("server error: %v", err)
+	}
 
 }
