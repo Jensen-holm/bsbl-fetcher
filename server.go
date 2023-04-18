@@ -1,52 +1,21 @@
 package main
 
 import (
-	"github.com/Jensen-holm/bsbl-api/crawl"
-	"github.com/Jensen-holm/bsbl-api/session"
-	"github.com/Jensen-holm/bsbl-api/user"
-	"time"
-
-	"github.com/gofiber/fiber/v2"
+	"context"
+	"fmt"
 	"log"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// tehe
-
 func main() {
-	app := fiber.New()
 
-	app.Get("/bsbl-api", func(c *fiber.Ctx) error {
-
-		st := time.Now()
-
-		h := crawl.GetHeaders(c)
-		usr := user.NewUser(h)
-
-		bsbl, err := session.WebPage(h["Web-Page"], usr)
-		if err != nil {
-			return fiber.NewError(
-				fiber.StatusBadRequest,
-				err.Error(),
-			)
-		}
-
-		err = bsbl.Main()
-		if err != nil {
-			return fiber.NewError(
-				fiber.StatusBadRequest,
-				err.Error(),
-			)
-		}
-
-		et := float64(time.Since(st))
-
-		result := session.NewResult(et, bsbl.Results())
-
-		return c.JSON(result.Unpack())
-	})
-
-	err := app.Listen(":3000")
+	opts := options.Client().ApplyURI("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0")
+	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
-		log.Fatalf("error listening to server: %v", err)
+		log.Fatalf("error connecting to mongodb client: %v", err)
 	}
+
+	fmt.Println(client)
 }
